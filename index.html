@@ -224,44 +224,34 @@
     .flower-group{animation:none; opacity:.85;}
   }
 
-  .firefly{
-    position:fixed;
-    width:10px; height:10px;
-    border-radius:50%;
-    background:radial-gradient(circle, #FFF3B0 0%, #F5E27A 45%, rgba(245,226,122,0) 72%);
-    pointer-events:none;
-    z-index:60;
+  .firefly-svg{ animation:hover1 6s ease-in-out infinite, glowpulse 1.8s ease-in-out infinite; }
+  .firefly-svg.f2{ animation-name: hover2, glowpulse; animation-duration:7.5s, 2.2s; }
+  .firefly-svg.f3{ animation-name: hover3, glowpulse; animation-duration:5.5s, 1.5s; }
+  @keyframes hover1{
+    0%{transform:translate(20px,60px);}
+    25%{transform:translate(45px,20px);}
+    50%{transform:translate(10px,-15px);}
+    75%{transform:translate(-15px,25px);}
+    100%{transform:translate(20px,60px);}
   }
-  .firefly.f1{animation:roam1 24s ease-in-out infinite, glowpulse 1.9s ease-in-out infinite;}
-  .firefly.f2{animation:roam2 29s ease-in-out infinite, glowpulse 2.3s ease-in-out infinite;}
-  .firefly.f3{animation:roam3 21s ease-in-out infinite, glowpulse 1.6s ease-in-out infinite;}
-  @keyframes roam1{
-    0%{top:72vh; left:8vw;}
-    20%{top:22vh; left:28vw;}
-    40%{top:55vh; left:68vw;}
-    60%{top:80vh; left:48vw;}
-    80%{top:32vh; left:82vw;}
-    100%{top:72vh; left:8vw;}
+  @keyframes hover2{
+    0%{transform:translate(-30px,90px);}
+    30%{transform:translate(10px,50px);}
+    60%{transform:translate(-25px,10px);}
+    100%{transform:translate(-30px,90px);}
   }
-  @keyframes roam2{
-    0%{top:14vh; left:82vw;}
-    25%{top:58vh; left:58vw;}
-    50%{top:38vh; left:18vw;}
-    75%{top:76vh; left:38vw;}
-    100%{top:14vh; left:82vw;}
-  }
-  @keyframes roam3{
-    0%{top:48vh; left:50vw;}
-    30%{top:8vh; left:14vw;}
-    60%{top:86vh; left:74vw;}
-    100%{top:48vh; left:50vw;}
+  @keyframes hover3{
+    0%{transform:translate(35px,-40px);}
+    35%{transform:translate(5px,-70px);}
+    70%{transform:translate(50px,-90px);}
+    100%{transform:translate(35px,-40px);}
   }
   @keyframes glowpulse{
     0%,100%{opacity:.4;}
     50%{opacity:1;}
   }
   @media (prefers-reduced-motion:reduce){
-    .firefly{animation:none; opacity:.7;}
+    .firefly-svg{animation:none; opacity:.7;}
   }
 
   .eyebrow{
@@ -412,6 +402,10 @@
             <stop offset="0%" stop-color="#4E7F5B"/>
             <stop offset="100%" stop-color="#6E8B5D"/>
           </linearGradient>
+          <radialGradient id="fireflyGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#F5E27A" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#F5E27A" stop-opacity="0"/>
+          </radialGradient>
         </defs>
         <path d="M110.0 600.0 L110.1 591.5 L110.4 583.0 L110.7 574.5 L111.2 566.0 L111.7 557.5 L112.3 549.0 L112.9 540.5 L113.6 532.0 L114.3 523.5 L115.1 515.0 L116.0 506.5 L116.9 498.0 L117.8 489.5 L118.8 481.0 L119.8 472.5 L120.9 464.0 L122.0 455.5 L123.1 447.0 L124.3 438.5 L125.5 430.0 L126.8 421.5 L128.1 413.0 L129.4 404.5 L130.8 396.0 L132.2 387.5 L133.6 379.0 L135.1 370.5 L136.6 362.0 L138.1 353.5 L139.7 345.0 L141.3 336.5 L142.9 328.0 L144.6 319.5 L146.3 311.0 L148.0 302.5 L149.7 294.0 L151.5 285.5 L153.3 277.0 L155.2 268.5 L157.0 260.0 L158.9 251.5 L160.9 243.0 L162.8 234.5 L164.8 226.0 L166.8 217.5 L168.8 209.0 L170.9 200.5 L173.0 192.0 L175.1 183.5 L177.2 175.0 L179.4 166.5 L181.6 158.0 L183.8 149.5 L186.0 141.0 L188.3 132.5 L190.6 124.0 L192.9 115.5 L195.2 107.0 L197.6 98.5 L200.0 90.0 C222.0 76.0 238.0 50.0 216.0 32.0 C198.0 18.0 174.0 28.0 180.0 46.0 C184.0 58.0 198.0 60.0 206.0 52.0" fill="none" stroke="#A8B896" stroke-width="3" opacity=".35" transform="translate(150,18) scale(.55) rotate(6)"/>
         <path class="stem" d="M110.0 600.0 L110.1 591.5 L110.4 583.0 L110.7 574.5 L111.2 566.0 L111.7 557.5 L112.3 549.0 L112.9 540.5 L113.6 532.0 L114.3 523.5 L115.1 515.0 L116.0 506.5 L116.9 498.0 L117.8 489.5 L118.8 481.0 L119.8 472.5 L120.9 464.0 L122.0 455.5 L123.1 447.0 L124.3 438.5 L125.5 430.0 L126.8 421.5 L128.1 413.0 L129.4 404.5 L130.8 396.0 L132.2 387.5 L133.6 379.0 L135.1 370.5 L136.6 362.0 L138.1 353.5 L139.7 345.0 L141.3 336.5 L142.9 328.0 L144.6 319.5 L146.3 311.0 L148.0 302.5 L149.7 294.0 L151.5 285.5 L153.3 277.0 L155.2 268.5 L157.0 260.0 L158.9 251.5 L160.9 243.0 L162.8 234.5 L164.8 226.0 L166.8 217.5 L168.8 209.0 L170.9 200.5 L173.0 192.0 L175.1 183.5 L177.2 175.0 L179.4 166.5 L181.6 158.0 L183.8 149.5 L186.0 141.0 L188.3 132.5 L190.6 124.0 L192.9 115.5 L195.2 107.0 L197.6 98.5 L200.0 90.0 C222.0 76.0 238.0 50.0 216.0 32.0 C198.0 18.0 174.0 28.0 180.0 46.0 C184.0 58.0 198.0 60.0 206.0 52.0"/>
@@ -446,6 +440,19 @@
         <ellipse cx="157.6" cy="571.4" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(246 157.6 571.4)"/>
         <ellipse cx="155.9" cy="563.6" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(318 155.9 563.6)"/>
         <circle cx="160.0" cy="568.0" r="2.2" fill="#E8B84B"/></g>
+
+        <g class="firefly-svg f1" transform="translate(230,300)">
+          <circle r="15" fill="url(#fireflyGlow)"/>
+          <circle r="3" fill="#FFF3B0"/>
+        </g>
+        <g class="firefly-svg f2" transform="translate(120,420)">
+          <circle r="13" fill="url(#fireflyGlow)"/>
+          <circle r="2.6" fill="#FFF3B0"/>
+        </g>
+        <g class="firefly-svg f3" transform="translate(190,180)">
+          <circle r="12" fill="url(#fireflyGlow)"/>
+          <circle r="2.4" fill="#FFF3B0"/>
+        </g>
       </svg>
     </div>
   </section>
@@ -726,10 +733,6 @@
   </footer>
 
 </main>
-
-<div class="firefly f1"></div>
-<div class="firefly f2"></div>
-<div class="firefly f3"></div>
 
 <script>
 (function(){
