@@ -70,19 +70,27 @@
     writing-mode:vertical-rl;
     transform:rotate(180deg);
     display:flex;
+    flex-direction:row-reverse;
     gap:28px;
   }
   nav.index a{
     text-decoration:none;
     color:var(--moss);
-    font-size:13px;
-    letter-spacing:.04em;
-    border-left:1px solid transparent;
-    padding-left:8px;
-    transition:color .2s, border-color .2s;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.06em;
+    border-left:2px solid transparent;
+    padding-left:9px;
+    transition:color .25s ease, border-color .25s ease;
+    display:inline-block;
   }
   nav.index a:hover, nav.index a:focus-visible{
     color:var(--ink);
+    border-color:var(--moss);
+  }
+  nav.index a.active{
+    color:var(--ink);
+    font-weight:600;
     border-color:var(--spore);
   }
   @media (max-width:900px){
@@ -167,12 +175,48 @@
     align-items:center;
   }
   @media (max-width:900px){
-    .hero{grid-template-columns:1fr; gap:20px; min-height:auto;}
-    .hero .art{order:-1; max-width:280px; margin:0 auto;}
+    .hero{
+      display:grid;
+      grid-template-columns:1fr 145px;
+      grid-template-areas:
+        "name art"
+        "role art"
+        "tagline tagline"
+        "quote quote"
+        "card card";
+      gap:8px 10px;
+      min-height:auto;
+    }
+    .hero > div:first-child{display:contents;}
+    .hero h1{grid-area:name;}
+    .hero .role{grid-area:role;}
+    .hero .tagline{grid-area:tagline; margin-top:14px;}
+    .hero .pull-quote{grid-area:quote;}
+    .hero .tag-card{grid-area:card;}
+    .hero .art{grid-area:art; max-width:145px; align-self:start; margin:26px 0 0;}
+  }
+  @media (max-width:500px){
+    .hero{grid-template-columns:1fr 115px;}
+    .hero .art{max-width:115px;}
   }
   .hero h1{
     font-size:clamp(2.6rem, 5.2vw, 4.2rem);
     line-height:1.03;
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .name-flower{
+    flex-shrink:0;
+    transform-origin:50% 100%;
+    animation:flower-sway 3.2s ease-in-out infinite;
+  }
+  @keyframes flower-sway{
+    0%,100%{transform:rotate(-6deg);}
+    50%{transform:rotate(6deg);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .name-flower{animation:none;}
   }
   .hero .role{
     margin-top:12px;
@@ -199,6 +243,17 @@
   .tag-card .v{font-family:'Fraunces', serif; font-style:italic; font-weight:500; font-size:1.05em;}
   .tag-card a.v{color:var(--ink); text-decoration:none; border-bottom:1px solid var(--moss);}
   .tag-card a.v:hover{color:var(--fern);}
+
+  .pull-quote{
+    margin:26px 0 0;
+    padding-left:20px;
+    border-left:3px solid var(--moss);
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-size:1.05rem;
+    color:var(--fern);
+    max-width:46ch;
+  }
   @media (max-width:500px){
     .tag-card{font-size:16px; padding:20px 20px;}
     .tag-card .k{min-width:120px;}
@@ -208,7 +263,7 @@
     .tag-card .k{min-width:0; font-size:.85em;}
   }
 
-  .art svg{width:100%; height:auto; display:block;}
+  .art > svg{width:100%; height:auto; display:block;}
   .stem{
     fill:none; stroke:var(--fern); stroke-width:2.4; stroke-linecap:round;
     stroke-dasharray:1000; stroke-dashoffset:1000;
@@ -216,12 +271,45 @@
   }
   .leaflet{ fill:var(--moss); opacity:0; animation:leafin .5s ease-out forwards; }
   .flower-group{opacity:0; animation:leafin .6s ease-out forwards;}
+  .uploaded-fern{
+    clip-path:inset(100% 0 0 0);
+    animation:fern-reveal 2.8s steps(13, end) forwards;
+  }
+  @keyframes fern-reveal{
+    to{ clip-path:inset(0% 0 0 0); }
+  }
+  .branch-stem{
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    animation:stem-grow 1s ease-out forwards;
+  }
+  @keyframes stem-grow{
+    0%{opacity:0; transform:scaleY(.1);}
+    30%{opacity:1;}
+    100%{opacity:1; transform:scaleY(1);}
+  }
+  .branch-leaf{
+    opacity:0;
+    transform-box:fill-box;
+    transform-origin:50% 100%;
+    animation:leaf-grow .9s cubic-bezier(.25,.8,.35,1) forwards;
+  }
+  @keyframes leaf-grow{
+    0%{opacity:0; transform:scale(.08);}
+    40%{opacity:1;}
+    100%{opacity:1; transform:scale(1);}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .branch-stem, .branch-leaf{animation:none; opacity:1; transform:none;}
+  }
   @keyframes draw{to{stroke-dashoffset:0;}}
   @keyframes leafin{to{opacity:.85;}}
   @media (prefers-reduced-motion:reduce){
     .stem{animation:none; stroke-dashoffset:0;}
     .leaflet{animation:none; opacity:.85;}
     .flower-group{animation:none; opacity:.85;}
+    .uploaded-fern{animation:none; clip-path:none;}
   }
 
   .firefly-svg{ animation:hover1 6s ease-in-out infinite, glowpulse 1.8s ease-in-out infinite; }
@@ -299,7 +387,8 @@
   .plate .link{display:inline-block; margin-top:14px; font-size:14px;}
 
   .skill-block{margin-top:40px;}
-  .skill-block h4{font-size:1rem; color:var(--fern); font-family:'Fraunces', serif; font-style:italic; margin-bottom:14px;}
+  .skill-block h4{font-size:1rem; color:var(--fern); font-family:'Fraunces', serif; font-style:italic; margin-bottom:14px; display:flex; align-items:center; gap:9px;}
+  .skill-icon{width:19px; height:19px; flex-shrink:0; color:var(--fern);}
   .herbier{display:flex; flex-wrap:wrap; gap:12px;}
   .leaf-tag{
     border:1px solid var(--moss); color:var(--ink); padding:8px 16px;
@@ -316,6 +405,26 @@
   .btn:hover{background:var(--ink); color:var(--paper);}
   .btn.primary{background:var(--fern); border-color:var(--fern); color:var(--paper);}
   .btn.primary:hover{background:var(--ink); border-color:var(--ink);}
+  .passion-domains{
+    margin-top:40px;
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:1px;
+    background:var(--line);
+    border:1px solid var(--line);
+  }
+  @media (max-width:820px){
+    .passion-domains{grid-template-columns:repeat(2, 1fr);}
+  }
+  @media (max-width:560px){
+    .passion-domains{grid-template-columns:1fr;}
+  }
+  .passion-domain{background:var(--paper); padding:30px; display:flex; flex-direction:column;}
+  .passion-domain h3{font-size:1.2rem; margin-top:14px;}
+  .passion-domain p{margin-top:10px; font-size:15px;}
+  .passion-domain .herbier{margin-top:16px; margin-top:auto; padding-top:16px;}
+  .passion-icon{width:56px; height:56px; color:var(--fern);}
+  .passion-icon.guitar-icon{width:80px; height:40px;}
   .contact-info{margin-top:20px; font-size:15px; color:var(--moss);}
   .contact-info span{color:var(--ink);}
 
@@ -342,12 +451,14 @@
 
 <nav class="index" aria-label="Sommaire">
   <ul>
-    <li><a href="#profil">Profil</a></li>
+    <li><a href="#profil" class="active">Profil</a></li>
     <li><a href="#parcours">Parcours</a></li>
     <li><a href="#formation">Formation</a></li>
     <li><a href="#projets">Projets</a></li>
-    <li><a href="#soft-skills">Soft skills</a></li>
+    <li><a href="#prix">Prix</a></li>
     <li><a href="#competences">Compétences</a></li>
+    <li><a href="#soft-skills">Soft skills</a></li>
+    <li><a href="#passions">Passions</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
@@ -372,9 +483,11 @@
       <li><span class="mnum">02</span><a href="#parcours">Parcours</a></li>
       <li><span class="mnum">03</span><a href="#formation">Formation</a></li>
       <li><span class="mnum">04</span><a href="#projets">Projets</a></li>
-      <li><span class="mnum">05</span><a href="#soft-skills">Soft skills</a></li>
+      <li><span class="mnum">05</span><a href="#prix">Prix</a></li>
       <li><span class="mnum">06</span><a href="#competences">Compétences</a></li>
-      <li><span class="mnum">07</span><a href="#contact">Contact</a></li>
+      <li><span class="mnum">07</span><a href="#soft-skills">Soft skills</a></li>
+      <li><span class="mnum">08</span><a href="#passions">Passions</a></li>
+      <li><span class="mnum">09</span><a href="#contact">Contact</a></li>
     </ul>
   </nav>
 </div>
@@ -383,9 +496,10 @@
 
   <section class="hero" id="haut">
     <div>
-      <h1>Lucie Fossier</h1>
+      <h1>Lucie Fossier <svg class="name-flower" width="34" height="49" viewBox="0 0 887 1280" preserveAspectRatio="xMidYMax meet" aria-hidden="true"><g transform="translate(0.000000,1280.000000) scale(0.100000,-0.100000)" fill="#B6705F"><path d="M4620 12786 c-76 -17 -205 -76 -328 -149 -369 -219 -663 -542 -857 -942 -181 -373 -260 -755 -235 -1135 15 -223 41 -343 102 -478 15 -35 28 -67 28 -70 0 -4 -48 41 -107 99 -271 266 -527 452 -828 599 -425 208 -802 267 -1123 174 -421 -121 -777 -473 -880 -869 -59 -224 -47 -407 39 -624 111 -280 392 -585 769 -834 401 -265 932 -407 1477 -396 89 2 159 1 155 -2 -4 -3 -79 -36 -167 -74 -192 -83 -452 -213 -555 -280 -299 -191 -519 -443 -689 -786 -197 -396 -258 -819 -175 -1204 53 -247 153 -424 342 -607 355 -342 907 -474 1397 -333 165 47 380 166 560 310 456 364 798 908 928 1475 l24 105 6 -85 c15 -198 19 -529 8 -755 -25 -520 -72 -832 -243 -1610 -211 -969 -268 -1420 -268 -2150 0 -399 16 -702 61 -1150 20 -208 72 -625 88 -709 14 -76 -4 -39 -29 59 -37 149 -203 638 -283 835 -485 1199 -1164 2019 -2052 2481 -496 258 -1001 386 -1639 415 l-149 7 6 -219 c4 -121 13 -277 22 -349 113 -943 568 -1645 1436 -2219 389 -256 790 -455 1679 -831 438 -185 648 -279 879 -391 l194 -95 391 197 c1110 559 1475 775 1906 1133 875 726 1196 1651 985 2836 -27 149 -50 253 -57 261 -6 5 -293 -54 -453 -95 -710 -179 -1246 -461 -1642 -862 -246 -249 -420 -513 -566 -854 -169 -394 -257 -754 -397 -1615 -39 -239 -84 -509 -101 -600 -17 -91 -33 -180 -36 -198 -13 -77 -20 -15 -26 240 -24 962 14 1853 114 2678 45 370 103 737 223 1408 171 949 198 1332 130 1827 -17 120 -69 379 -84 421 -14 35 6 22 26 -19 55 -107 265 -409 403 -577 112 -138 342 -368 462 -463 462 -364 923 -494 1309 -367 413 137 764 521 931 1020 66 199 82 300 76 485 -6 165 -18 230 -66 360 -113 302 -365 601 -741 880 -96 71 -265 165 -297 165 -7 0 -13 3 -13 8 0 4 30 9 68 10 123 5 253 33 561 122 606 175 886 302 1157 525 266 219 410 544 390 880 -14 245 -88 410 -268 600 -317 336 -748 505 -1282 505 -292 0 -516 -37 -803 -132 -336 -111 -634 -292 -878 -533 l-101 -100 56 120 c153 322 253 669 267 920 20 379 -137 825 -407 1155 -115 141 -274 288 -392 364 -131 83 -294 114 -438 82z"/></g></svg></h1>
       <p class="role">Ingénieure informatique — Full Stack &amp; gestion de projets</p>
       <p class="tagline">Je conçois des systèmes avec la même patience qu'on regarde une fougère se déplier : lentement, en plusieurs volutes, et toujours vers la lumière. Curieuse et motivée, j'aime suivre les nouvelles technologies de près et me former en continu.</p>
+      <blockquote class="pull-quote">Une compétence, comme une plante, ne grandit pas parce qu'on la tire vers le haut — seulement en prenant soin de ses racines.</blockquote>
       <div class="tag-card">
         <div class="row"><span class="k">Localisation</span><span class="v">Paris</span></div>
         <div class="row"><span class="k">Mobilité</span><span class="v">Île-de-France, totale</span></div>
@@ -407,39 +521,113 @@
             <stop offset="100%" stop-color="#F5E27A" stop-opacity="0"/>
           </radialGradient>
         </defs>
-        <path d="M110.0 600.0 L110.1 591.5 L110.4 583.0 L110.7 574.5 L111.2 566.0 L111.7 557.5 L112.3 549.0 L112.9 540.5 L113.6 532.0 L114.3 523.5 L115.1 515.0 L116.0 506.5 L116.9 498.0 L117.8 489.5 L118.8 481.0 L119.8 472.5 L120.9 464.0 L122.0 455.5 L123.1 447.0 L124.3 438.5 L125.5 430.0 L126.8 421.5 L128.1 413.0 L129.4 404.5 L130.8 396.0 L132.2 387.5 L133.6 379.0 L135.1 370.5 L136.6 362.0 L138.1 353.5 L139.7 345.0 L141.3 336.5 L142.9 328.0 L144.6 319.5 L146.3 311.0 L148.0 302.5 L149.7 294.0 L151.5 285.5 L153.3 277.0 L155.2 268.5 L157.0 260.0 L158.9 251.5 L160.9 243.0 L162.8 234.5 L164.8 226.0 L166.8 217.5 L168.8 209.0 L170.9 200.5 L173.0 192.0 L175.1 183.5 L177.2 175.0 L179.4 166.5 L181.6 158.0 L183.8 149.5 L186.0 141.0 L188.3 132.5 L190.6 124.0 L192.9 115.5 L195.2 107.0 L197.6 98.5 L200.0 90.0 C222.0 76.0 238.0 50.0 216.0 32.0 C198.0 18.0 174.0 28.0 180.0 46.0 C184.0 58.0 198.0 60.0 206.0 52.0" fill="none" stroke="#A8B896" stroke-width="3" opacity=".35" transform="translate(150,18) scale(.55) rotate(6)"/>
-        <path class="stem" d="M110.0 600.0 L110.1 591.5 L110.4 583.0 L110.7 574.5 L111.2 566.0 L111.7 557.5 L112.3 549.0 L112.9 540.5 L113.6 532.0 L114.3 523.5 L115.1 515.0 L116.0 506.5 L116.9 498.0 L117.8 489.5 L118.8 481.0 L119.8 472.5 L120.9 464.0 L122.0 455.5 L123.1 447.0 L124.3 438.5 L125.5 430.0 L126.8 421.5 L128.1 413.0 L129.4 404.5 L130.8 396.0 L132.2 387.5 L133.6 379.0 L135.1 370.5 L136.6 362.0 L138.1 353.5 L139.7 345.0 L141.3 336.5 L142.9 328.0 L144.6 319.5 L146.3 311.0 L148.0 302.5 L149.7 294.0 L151.5 285.5 L153.3 277.0 L155.2 268.5 L157.0 260.0 L158.9 251.5 L160.9 243.0 L162.8 234.5 L164.8 226.0 L166.8 217.5 L168.8 209.0 L170.9 200.5 L173.0 192.0 L175.1 183.5 L177.2 175.0 L179.4 166.5 L181.6 158.0 L183.8 149.5 L186.0 141.0 L188.3 132.5 L190.6 124.0 L192.9 115.5 L195.2 107.0 L197.6 98.5 L200.0 90.0 C222.0 76.0 238.0 50.0 216.0 32.0 C198.0 18.0 174.0 28.0 180.0 46.0 C184.0 58.0 198.0 60.0 206.0 52.0"/>
-        <g class="leaflet" style="animation-delay:0.48s"><path d="M116.9 546.1 Q97.3 445.6 10.9 386.8 Q25.9 490.2 107.6 551.9 Z" fill="url(#leafGrad)"/><path d="M112.3 549.0 L10.9 386.8" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:0.53s"><path d="M116.9 551.9 Q198.6 490.2 213.6 386.8 Q127.3 445.6 107.6 546.1 Z" fill="url(#leafGrad)"/><path d="M112.3 549.0 L213.6 386.8" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:0.81s"><path d="M127.1 449.2 Q110.2 368.1 40.1 320.3 Q52.2 404.3 117.8 455.0 Z" fill="url(#leafGrad)"/><path d="M122.4 452.1 L40.1 320.3" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:0.86s"><path d="M127.1 455.0 Q192.6 404.3 204.8 320.3 Q134.6 368.1 117.8 449.2 Z" fill="url(#leafGrad)"/><path d="M122.4 452.1 L204.8 320.3" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.14s"><path d="M142.5 352.3 Q128.4 290.5 74.4 253.8 Q83.8 318.4 133.1 358.1 Z" fill="url(#leafGrad)"/><path d="M137.8 355.2 L74.4 253.8" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.19s"><path d="M142.5 358.1 Q191.8 318.4 201.2 253.8 Q147.2 290.5 133.1 352.3 Z" fill="url(#leafGrad)"/><path d="M137.8 355.2 L201.2 253.8" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.47s"><path d="M162.1 255.4 Q150.9 213.0 113.0 187.2 Q119.6 232.5 152.8 261.2 Z" fill="url(#leafGrad)"/><path d="M157.4 258.3 L113.0 187.2" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.52s"><path d="M162.1 261.2 Q195.3 232.5 201.8 187.2 Q164.0 213.0 152.8 255.4 Z" fill="url(#leafGrad)"/><path d="M157.4 258.3 L201.8 187.2" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.80s"><path d="M185.4 158.5 Q176.9 135.5 155.3 120.7 Q159.0 146.6 176.0 164.3 Z" fill="url(#leafGrad)"/><path d="M180.7 161.4 L155.3 120.7" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="leaflet" style="animation-delay:1.85s"><path d="M185.4 164.3 Q202.4 146.6 206.1 120.7 Q184.5 135.5 176.0 158.5 Z" fill="url(#leafGrad)"/><path d="M180.7 161.4 L206.1 120.7" stroke="#20301F" stroke-width="0.9" opacity="0.25" fill="none"/></g>
-        <g class="flower-group" style="animation-delay:1.9s"><path d="M46.0 559.0 C42.0 574.0 48.0 583.4 46.0 600.0" fill="none" stroke="#6E8B5D" stroke-width="1.6"/>
-        <ellipse cx="47.3" cy="543.1" rx="4.2" ry="6.5" fill="#B6705F" transform="rotate(8 47.3 543.1)"/>
-        <ellipse cx="54.9" cy="550.5" rx="4.2" ry="6.5" fill="#B6705F" transform="rotate(80 54.9 550.5)"/>
-        <ellipse cx="49.4" cy="559.5" rx="4.2" ry="6.5" fill="#B6705F" transform="rotate(152 49.4 559.5)"/>
-        <ellipse cx="41.4" cy="558.4" rx="4.2" ry="6.5" fill="#B6705F" transform="rotate(224 41.4 558.4)"/>
-        <ellipse cx="38.8" cy="549.2" rx="4.2" ry="6.5" fill="#B6705F" transform="rotate(296 38.8 549.2)"/>
-        <circle cx="46.0" cy="552.0" r="3.2" fill="#E8B84B"/></g>
-        <g class="flower-group" style="animation-delay:2.05s"><path d="M238.0 565.9 C234.0 578.7 240.0 588.2 238.0 601.9" fill="none" stroke="#6E8B5D" stroke-width="1.4"/>
-        <ellipse cx="239.0" cy="551.6" rx="3.6" ry="5.5" fill="#C98B7A" transform="rotate(-15 239.0 551.6)"/>
-        <ellipse cx="245.5" cy="557.8" rx="3.6" ry="5.5" fill="#C98B7A" transform="rotate(57 245.5 557.8)"/>
-        <ellipse cx="241.7" cy="566.0" rx="3.6" ry="5.5" fill="#C98B7A" transform="rotate(129 241.7 566.0)"/>
-        <ellipse cx="234.3" cy="566.0" rx="3.6" ry="5.5" fill="#C98B7A" transform="rotate(201 234.3 566.0)"/>
-        <ellipse cx="230.5" cy="557.8" rx="3.6" ry="5.5" fill="#C98B7A" transform="rotate(273 230.5 557.8)"/>
-        <circle cx="238.0" cy="560.0" r="2.7" fill="#E8B84B"/></g>
-        <g class="flower-group" style="animation-delay:2.2s"><path d="M160.0 572.9 C156.0 583.7 162.0 591.3 160.0 604.0" fill="none" stroke="#6E8B5D" stroke-width="1.1"/>
-        <ellipse cx="163.7" cy="561.0" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(30 163.7 561.0)"/>
-        <ellipse cx="169.6" cy="565.9" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(102 169.6 565.9)"/>
-        <ellipse cx="165.7" cy="573.0" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(174 165.7 573.0)"/>
-        <ellipse cx="157.6" cy="571.4" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(246 157.6 571.4)"/>
-        <ellipse cx="155.9" cy="563.6" rx="2.9" ry="4.6" fill="#B6705F" transform="rotate(318 155.9 563.6)"/>
-        <circle cx="160.0" cy="568.0" r="2.2" fill="#E8B84B"/></g>
+        <svg class="uploaded-branch" x="15" y="10" width="390" height="578" viewBox="208 -208 864 1280" preserveAspectRatio="xMidYMid meet">
+          <g transform="rotate(-90 640 432) translate(0.000000,864.000000) scale(0.100000,-0.100000)">
+          <path class="branch-stem" d="M9889 5964 c-390 -318 -1000 -724 -1438 -958 -1752 -938 -3680 -1451
+-5306 -1413 -539 13 -969 75 -1683 241 -222 52 -230 55 -506 239 -198 131
+-296 184 -401 217 -87 27 -227 36 -323 21 -79 -12 -213 -60 -216 -76 -1 -13
+428 -229 631 -318 921 -403 1817 -608 2663 -610 232 -1 384 11 755 58 1511
+192 3023 720 4375 1529 337 201 771 500 1075 740 201 158 489 404 474 406 -3
+0 -48 -34 -100 -76z" fill="#3D6B4A"/>
+          <path class="branch-leaf" style="animation-delay:0.50s" d="M10524 8568 c-39 -40 -123 -134 -187 -208 -63 -74 -163 -182 -222
+-240 -184 -181 -312 -357 -424 -584 -111 -226 -174 -406 -315 -903 -47 -166
+-111 -373 -142 -460 -76 -214 -74 -203 -32 -203 37 0 89 29 147 83 86 81 226
+275 475 660 43 67 82 117 89 114 6 -2 13 -22 15 -45 5 -68 -64 -197 -269 -502
+-186 -277 -291 -446 -304 -488 -6 -20 1 -18 67 22 322 196 661 520 890 851
+228 328 384 725 429 1088 18 152 7 416 -24 547 -26 109 -70 238 -103 303 l-19
+37 -71 -72z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:0.66s" d="M12460 8197 c-417 -211 -759 -481 -1214 -955 -336 -351 -459 -496
+-484 -571 -15 -42 -15 -37 4 -55 52 -52 323 46 563 204 61 40 136 103 213 181
+153 153 248 226 248 190 0 -16 -74 -119 -150 -206 -98 -114 -232 -240 -323
+-303 -62 -43 -175 -92 -212 -92 -6 0 -34 -11 -61 -25 -90 -45 -91 -100 -1
+-147 33 -18 59 -22 127 -23 73 0 93 4 142 28 31 15 69 42 85 60 18 20 58 45
+108 65 300 125 583 359 786 652 203 291 324 660 317 958 l-3 112 -145 -73z" fill="#4E7F5B"/>
+          <path class="branch-leaf" style="animation-delay:0.82s" d="M9085 7854 c-141 -35 -316 -149 -426 -279 -69 -81 -116 -166 -145
+-265 -44 -148 -443 -1309 -506 -1475 -146 -380 -317 -729 -497 -1015 -46 -74
+329 298 493 488 354 411 667 933 868 1447 l39 100 -5 -81 c-3 -45 -15 -128
+-27 -185 -65 -315 -200 -625 -539 -1234 l-161 -290 86 85 c549 541 956 1196
+1100 1770 41 166 57 295 62 516 6 235 -3 294 -53 354 -59 69 -171 94 -289 64z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:0.98s" d="M7713 7578 c-204 -293 -364 -542 -422 -657 -12 -24 -73 -190 -136
+-369 -166 -479 -219 -625 -305 -848 -227 -583 -454 -1016 -750 -1429 -36 -50
+-39 -56 -14 -34 16 14 67 58 114 99 528 461 990 1005 1269 1495 45 79 51 86
+51 59 0 -112 -125 -361 -354 -704 -73 -110 -408 -594 -450 -650 -16 -22 31 10
+160 106 444 332 819 805 1020 1291 132 317 194 609 194 913 0 234 -27 398 -96
+592 -28 79 -130 282 -149 298 -9 7 -44 -36 -132 -162z" fill="#3D6B4A"/>
+          <path class="branch-leaf" style="animation-delay:1.14s" d="M6447 7328 c-256 -273 -437 -498 -614 -763 -197 -296 -250 -397 -508
+-975 -274 -610 -461 -944 -699 -1245 -77 -98 -311 -339 -411 -424 l-50 -43 90
+47 c496 259 925 640 1340 1190 133 176 346 499 484 733 63 106 116 191 117
+189 2 -2 -10 -55 -25 -118 -80 -313 -221 -616 -439 -944 -167 -251 -387 -526
+-476 -594 -73 -56 -134 -123 -142 -156 -5 -20 -1 -32 15 -48 19 -19 32 -22 99
+-21 182 2 405 108 483 232 15 24 70 79 123 122 191 159 329 304 474 501 420
+569 590 1289 457 1941 -37 184 -155 508 -184 508 -5 0 -65 -60 -134 -132z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:1.30s" d="M3815 6760 c-55 -27 -170 -83 -255 -124 -245 -118 -451 -265 -678
+-480 -155 -149 -282 -291 -609 -683 -329 -395 -497 -581 -658 -726 -130 -118
+-314 -257 -425 -323 -44 -26 -79 -48 -77 -50 1 -2 68 23 147 55 784 315 1370
+677 1798 1110 45 46 82 80 82 77 0 -16 -89 -136 -170 -230 -146 -169 -378
+-385 -605 -561 -208 -162 -510 -344 -640 -385 -22 -7 -70 -28 -108 -48 -105
+-54 -143 -115 -98 -156 36 -33 123 -58 221 -63 187 -11 366 40 470 132 14 12
+77 50 140 84 732 400 1264 1130 1505 2066 21 81 75 334 75 351 0 9 -18 1 -115
+-46z" fill="#6E8B5D"/>
+          <path class="branch-leaf" style="animation-delay:1.46s" d="M5120 6584 c-268 -152 -559 -367 -815 -601 -184 -169 -468 -462 -832
+-858 -563 -612 -945 -971 -1203 -1128 -87 -53 -144 -103 -135 -117 10 -16 52
+-12 160 14 580 142 1172 500 1752 1060 l142 137 18 -28 c27 -40 24 -126 -6
+-188 -36 -73 -205 -237 -416 -402 -222 -173 -302 -244 -383 -336 -64 -73 -117
+-166 -128 -225 l-7 -32 84 35 c477 204 960 601 1294 1064 340 472 558 1045
+593 1564 4 59 5 107 2 107 -3 0 -57 -30 -120 -66z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:1.62s" d="M11360 6195 c-291 -35 -596 -116 -760 -201 -76 -39 -93 -52 -108 -81
+-10 -17 -8 -25 6 -42 62 -74 460 -65 613 15 25 12 29 13 29 0 0 -19 -55 -65
+-106 -87 -101 -45 -531 -147 -739 -175 -128 -17 -245 -79 -245 -129 0 -32 63
+-82 125 -100 81 -24 208 -16 290 17 58 23 63 23 155 11 139 -19 468 -18 625 1
+419 53 864 191 1278 397 133 67 267 141 267 149 0 3 -44 25 -97 47 -222 94
+-426 147 -688 178 -147 18 -498 18 -645 0z" fill="#4E7F5B"/>
+          <path class="branch-leaf" style="animation-delay:1.78s" d="M9970 5239 c-252 -27 -507 -88 -740 -177 -176 -66 -200 -76 -200 -82
+0 -9 101 -58 166 -81 140 -48 271 -69 629 -99 289 -25 419 -43 530 -75 81 -24
+229 -84 222 -91 -2 -2 -158 6 -348 17 -414 26 -970 31 -1159 11 -183 -19 -389
+-53 -504 -83 -48 -13 -39 -21 54 -48 75 -22 178 -40 488 -81 410 -56 521 -84
+715 -184 253 -129 523 -209 832 -245 129 -16 469 -13 610 4 292 34 583 113
+830 225 38 17 71 33 73 34 6 6 -70 127 -128 205 -91 120 -270 286 -412 381
+-293 196 -630 315 -1028 365 -134 16 -496 19 -630 4z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:1.94s" d="M8640 4345 c-8 -2 -68 -9 -133 -15 -135 -14 -147 -22 -149 -103 -1
+-85 51 -137 186 -182 67 -23 153 -41 501 -107 231 -43 409 -119 464 -197 12
+-17 19 -31 14 -31 -4 0 -114 29 -243 65 -768 214 -1211 283 -1651 255 -90 -6
+-164 -12 -166 -14 -5 -5 644 -264 842 -336 679 -250 1193 -382 1720 -444 139
+-17 534 -41 541 -33 3 2 -19 45 -48 96 -325 560 -854 934 -1454 1026 -93 15
+-391 29 -424 20z" fill="#3D6B4A"/>
+          <path class="branch-leaf" style="animation-delay:2.10s" d="M7042 3712 c102 -76 180 -129 423 -287 353 -227 620 -425 620 -457 0
+-46 -152 3 -375 119 -369 193 -552 281 -636 307 -49 16 -131 44 -183 63 -122
+44 -194 49 -223 13 -37 -46 -2 -143 90 -242 69 -74 122 -111 195 -136 48 -16
+69 -32 148 -116 195 -206 441 -377 804 -558 196 -98 312 -149 770 -333 209
+-84 415 -168 458 -185 43 -18 80 -30 83 -28 13 14 5 319 -11 413 -112 649
+-681 1156 -1546 1376 -183 46 -537 99 -664 99 -9 0 12 -21 47 -48z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:2.26s" d="M1185 3454 c221 -335 389 -731 454 -1067 51 -266 52 -560 2 -812 -8
+-40 -8 -40 -14 25 -3 36 -11 124 -18 195 -42 482 -178 935 -381 1273 -53 87
+-56 96 -57 159 0 91 -30 149 -91 181 -101 53 -273 0 -393 -119 -70 -71 -101
+-134 -101 -209 0 -64 17 -100 72 -156 l40 -40 -8 -74 c-12 -103 -12 -386 0
+-495 40 -354 146 -707 343 -1140 30 -66 137 -293 239 -505 102 -212 198 -414
+213 -450 15 -36 30 -69 35 -73 7 -8 39 40 242 363 167 264 231 393 303 613
+164 497 132 1013 -91 1482 -158 334 -427 636 -748 839 -60 38 -60 38 -41 10z" fill="#6E8B5D"/>
+          <path class="branch-leaf" style="animation-delay:2.42s" d="M5660 3336 c410 -231 784 -552 1068 -918 29 -37 52 -70 52 -73 0 -3
+-43 32 -96 77 -367 316 -765 567 -1126 712 -75 30 -152 58 -172 61 -32 6 -37
+4 -65 -36 -24 -32 -31 -53 -31 -87 0 -83 50 -143 280 -332 202 -166 271 -243
+287 -322 10 -49 116 -199 190 -268 168 -157 411 -274 758 -365 72 -19 288 -66
+480 -106 193 -39 409 -86 480 -104 72 -18 131 -32 133 -30 1 1 -13 47 -33 103
+-122 353 -307 647 -578 921 -356 360 -804 613 -1324 747 -132 33 -337 74 -377
+74 -12 0 21 -23 74 -54z" fill="url(#leafGrad)"/>
+          <path class="branch-leaf" style="animation-delay:2.58s" d="M4400 3070 c0 -27 126 -176 244 -290 246 -235 361 -353 404 -412 50
+-68 106 -176 121 -234 18 -68 29 -134 22 -134 -16 0 -215 168 -491 416 -343
+307 -563 463 -800 564 l-91 39 -19 -31 c-29 -48 -34 -99 -15 -170 23 -91 78
+-181 242 -395 185 -241 223 -303 271 -444 88 -255 192 -403 392 -553 229 -173
+549 -305 1015 -421 306 -76 565 -133 565 -124 0 27 -46 236 -75 343 -135 492
+-372 904 -720 1251 -318 318 -674 530 -987 588 -43 8 -78 11 -78 7z" fill="#4E7F5B"/>
+          <path class="branch-leaf" style="animation-delay:2.74s" d="M2847 3028 c13 -71 63 -180 146 -315 48 -79 125 -206 172 -283 128
+-210 208 -379 230 -487 8 -42 -4 -42 -45 -2 -39 39 -73 89 -247 366 -219 345
+-330 483 -474 586 -83 59 -126 77 -183 77 -94 0 -136 -77 -136 -249 0 -155 43
+-317 110 -419 32 -49 38 -67 43 -134 27 -326 181 -673 444 -994 174 -212 367
+-394 853 -806 140 -119 290 -248 333 -287 42 -39 81 -71 85 -71 20 0 90 309
+116 508 21 160 21 481 1 639 -90 711 -469 1319 -1060 1703 -100 65 -358 200
+-382 200 -9 0 -11 -10 -6 -32z" fill="url(#leafGrad)"/>
+          </g>
+        </svg>
 
         <g class="firefly-svg f1" transform="translate(230,300)">
           <circle r="15" fill="url(#fireflyGlow)"/>
@@ -591,6 +779,7 @@
         <p class="meta">CNAM, Slovaquie · Février 2025</p>
         <p>Application de gestion d'appareils domotiques avec simulation de capteurs.</p>
         <p class="stack">React · Tailwind CSS · Node.js · Express · Python · Docker · MQTT · WebSocket · MongoDB</p>
+        <a class="link" href="projets/domotique.html">En savoir plus →</a>
       </div>
       <div class="plate">
         <svg class="leaf-mark" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 32 C 5 26 4 12 17 3 C 30 12 29 26 17 32 Z" fill="none" stroke="#3D6B4A" stroke-width="1.6"/><path d="M17 32 L17 5" stroke="#3D6B4A" stroke-width="1.2"/></svg>
@@ -598,13 +787,35 @@
         <p class="meta">CNAM, Reims · Novembre 2024</p>
         <p>Collecte de données boursières via un pipeline de scraping.</p>
         <p class="stack">PHP · Apache · MySQL</p>
+        <a class="link" href="projets/scraping.html">En savoir plus →</a>
       </div>
       <div class="plate">
         <svg class="leaf-mark" viewBox="0 0 34 34" aria-hidden="true"><path d="M17 32 C 5 26 4 12 17 3 C 30 12 29 26 17 32 Z" fill="none" stroke="#3D6B4A" stroke-width="1.6"/><path d="M17 32 L17 5" stroke="#3D6B4A" stroke-width="1.2"/></svg>
         <h3>OpenGluco</h3>
         <p class="meta">Open-source · en développement continu</p>
         <p>Plateforme de centralisation et de visualisation de données de glycémie, née en Slovaquie et toujours cultivée.</p>
-        <a class="link" href="#">Voir le dépôt →</a>
+        <a class="link" href="projets/opengluco.html">En savoir plus →</a>
+        <a class="link" href="#" style="margin-left:16px;">Voir le dépôt →</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="prix">
+    <span class="eyebrow">Prix &amp; distinctions</span>
+    <h2 class="title">Récoltes remarquées</h2>
+    <div class="plates">
+      <div class="plate">
+        <svg class="leaf-mark" viewBox="0 0 1049 1280" aria-hidden="true"><g transform="translate(0,1280) scale(0.1,-0.1)" fill="#3D6B4A"><path d="M6015 12789 c-740 -46 -1469 -219 -2145 -509 -284 -121 -817 -407 -985 -528 -22 -15 -108 -77 -191 -136 -179 -126 -366 -275 -521 -412 -163 -144 -375 -344 -398 -375 -11 -15 -63 -74 -115 -131 -1223 -1342 -1815 -3153 -1624 -4968 153 -1459 796 -2809 1835 -3849 665 -665 1429 -1156 2315 -1486 406 -151 865 -268 1304 -330 341 -48 510 -59 900 -59 374 -1 519 8 810 45 85 11 182 23 215 25 33 3 121 19 195 35 707 160 1097 293 1625 554 386 191 672 366 1000 612 261 196 285 223 237 271 -17 17 -43 20 -233 25 -1742 51 -3386 839 -4545 2177 -1184 1368 -1717 3206 -1453 5010 218 1494 969 2854 2124 3849 116 100 115 98 115 132 0 52 -22 59 -186 58 -82 -1 -207 -6 -279 -10z"/></g></svg>
+        <h3>Nuit de l'Informatique</h3>
+        <p class="meta">Défi « Mets tes binocles ! » (supervision) — 2ᵉ place, 2024</p>
+        <p>Avec l'équipe Placeholders (Cnam Grand Est), 2ᵉ place au défi supervision « Mets tes binocles ! » proposé par MipihSIB, sur 34 équipes participantes, lors de la Nuit de l'Info 2024.</p>
+        <a class="link" href="https://www.nuitdelinfo.com/nuitinfo/defis2024:archives#defi458" target="_blank" rel="noopener">Voir les résultats du défi →</a>
+      </div>
+      <div class="plate">
+        <svg class="leaf-mark" viewBox="0 0 1280 1280" aria-hidden="true"><g transform="translate(0,1280) scale(0.1,-0.1)" fill="#3D6B4A"><path d="M3686 12773 c31 -127 790 -2630 958 -3161 135 -425 285 -843 346 -963 23 -43 24 -49 11 -49 -22 0 -124 -70 -154 -106 -60 -70 -81 -142 -121 -399 -30 -193 -88 -265 -314 -385 -470 -252 -813 -517 -1114 -859 -1081 -1230 -1241 -2984 -402 -4391 377 -632 968 -1164 1634 -1471 408 -188 814 -296 1265 -339 159 -15 497 -12 676 5 1005 96 1924 591 2554 1377 433 539 695 1162 792 1878 26 193 26 707 0 900 -115 846 -464 1569 -1041 2159 -304 310 -583 516 -991 731 -288 152 -326 200 -371 467 -13 81 -29 165 -35 188 -24 89 -97 193 -149 215 -17 7 -30 16 -30 19 0 4 21 63 46 132 92 251 194 615 434 1556 178 695 630 2499 630 2513 0 7 -300 10 -902 10 l-903 0 -209 -833 c-115 -457 -212 -835 -215 -839 -4 -4 -119 370 -255 832 l-249 840 -949 0 -948 0 6 -27z m1464 -4438 c12 -19 30 -40 40 -45 22 -12 1031 -14 1525 -3 l317 6 30 25 c28 24 29 24 43 6 52 -68 9 -234 -70 -274 -51 -25 -158 -24 -335 4 -246 37 -366 47 -612 46 -276 0 -446 -15 -697 -61 -227 -41 -314 -17 -356 100 -18 52 -19 127 -2 158 12 22 74 73 88 73 4 0 17 -16 29 -35z"/></g></svg>
+        <h3>Mini-entreprise</h3>
+        <p class="meta">Festival Mini-Entreprise — Entreprendre Pour Apprendre Grand Est, 2025</p>
+        <p>Prix de la persévérance, décroché lors d'un battle pitch : un pitch réalisé avec une camarade devant une centaine de personnes, avec à la clé une qualification pour un tournoi de France. Une expérience qui m'a énormément appris sur l'entrepreneuriat et le dépassement de soi.</p>
       </div>
     </div>
   </section>
@@ -614,7 +825,7 @@
     <h2 class="title">Feuilles pressées</h2>
 
     <div class="skill-block">
-      <h4>Frontend</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="8 4 2 12 8 20"/><polyline points="16 4 22 12 16 20"/></svg>Frontend</h4>
       <div class="herbier">
         <span class="leaf-tag">Angular</span><span class="leaf-tag">React</span><span class="leaf-tag">Vue.js</span>
         <span class="leaf-tag">Next.js</span><span class="leaf-tag">Tailwind CSS</span><span class="leaf-tag">Bootstrap</span>
@@ -622,45 +833,53 @@
       </div>
     </div>
     <div class="skill-block">
-      <h4>Backend</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="6" rx="1.5"/><rect x="3" y="14" width="18" height="6" rx="1.5"/><circle cx="7" cy="7" r="0.8" fill="currentColor" stroke="none"/><circle cx="7" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>Backend</h4>
       <div class="herbier">
         <span class="leaf-tag">Java</span><span class="leaf-tag">Python</span><span class="leaf-tag">PHP</span>
         <span class="leaf-tag">Symfony</span><span class="leaf-tag">C</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Bases de données</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5"/><path d="M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>Bases de données</h4>
       <div class="herbier">
         <span class="leaf-tag">SQL</span><span class="leaf-tag">PostgreSQL</span><span class="leaf-tag">MongoDB</span><span class="leaf-tag">InfluxDB</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Mobile</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg>Mobile</h4>
       <div class="herbier">
         <span class="leaf-tag">Android</span><span class="leaf-tag">React Native</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Cloud &amp; DevOps</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 18a4.5 4.5 0 0 1-1-8.9A5 5 0 0 1 16 7a4 4 0 0 1 1 7.9"/><path d="M7 18h10"/></svg>Cloud &amp; DevOps</h4>
       <div class="herbier">
         <span class="leaf-tag">AWS</span><span class="leaf-tag">Terraform</span><span class="leaf-tag">Docker</span><span class="leaf-tag">Git</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Design &amp; UI/UX</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 1 0 0 20c1.1 0 1.5-.9.9-1.7-.5-.6-.2-1.5.6-1.6h1.8A4.7 4.7 0 0 0 20 14c1.5-4.2-1.8-9-8-9Z"/><circle cx="7.5" cy="12" r="1" fill="currentColor" stroke="none"/><circle cx="9" cy="8" r="1" fill="currentColor" stroke="none"/><circle cx="14" cy="7.5" r="1" fill="currentColor" stroke="none"/></svg>Design &amp; UI/UX</h4>
       <div class="herbier">
         <span class="leaf-tag">Figma</span><span class="leaf-tag">UI/UX</span><span class="leaf-tag">GIMP</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Protocoles &amp; communication</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 6 0l3-3a4 4 0 0 0-6-6l-1 1"/><path d="M14 10a4 4 0 0 0-6 0l-3 3a4 4 0 0 0 6 6l1-1"/></svg>Protocoles &amp; communication</h4>
       <div class="herbier">
         <span class="leaf-tag">WebSocket</span><span class="leaf-tag">REST API</span><span class="leaf-tag">HTTP/HTTPS</span>
         <span class="leaf-tag">TCP/IP</span><span class="leaf-tag">MQTT</span><span class="leaf-tag">JSON</span><span class="leaf-tag">XML</span><span class="leaf-tag">GraphQL</span>
       </div>
     </div>
     <div class="skill-block">
-      <h4>Gestion de projet</h4>
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v3M12 18v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M3 12h3M18 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/><circle cx="12" cy="12" r="3.2"/></svg>Intelligence artificielle</h4>
+      <p style="margin:0 0 14px; font-size:15px; max-width:60ch;">Développement augmenté par l'IA : conception et optimisation de prompts pour LLM (Claude, Copilot), exploitation du contexte pour l'aide au développement et le débogage.</p>
+      <div class="herbier">
+        <span class="leaf-tag">Claude</span><span class="leaf-tag">GitHub Copilot</span>
+        <span class="leaf-tag">Prompt engineering</span><span class="leaf-tag">Débogage assisté par IA</span>
+      </div>
+    </div>
+    <div class="skill-block">
+      <h4><svg class="skill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3v18"/><path d="M6 4h11l-2.5 3.5L17 11H6"/></svg>Gestion de projet</h4>
       <div class="herbier">
         <span class="leaf-tag soft">Méthodologie Agile</span>
         <span class="leaf-tag soft">Analyse des besoins</span>
@@ -709,8 +928,47 @@
       </div>
     </div>
     <div class="callout">
-      <p>Il y a toujours plus à découvrir qu'une liste de mots-clés — la meilleure façon de savoir si le courant passe reste encore d'échanger directement.</p>
+      <p>Une liste de mots-clés ne suffit jamais à tout raconter. Le meilleur moyen de savoir si le courant passe reste encore d'échanger directement.</p>
       <a class="btn primary" href="#contact">Discutons-en →</a>
+    </div>
+  </section>
+
+  <section id="passions">
+    <span class="eyebrow">Passions</span>
+    <h2 class="title">Autres terreaux</h2>
+    <p class="lede">Ce qui pousse à côté du clavier, et qui nourrit le reste.</p>
+
+    <div class="passion-domains">
+      <div class="passion-domain">
+        <svg class="passion-icon guitar-icon" viewBox="0 0 1280 640" aria-hidden="true"><g transform="translate(0,640) scale(0.1,-0.1)" fill="currentColor"><path d="M1429 5061 c-342 -74 -590 -205 -783 -413 -99 -106 -162 -202 -246 -373 -116 -236 -191 -495 -254 -875 -89 -541 -113 -891 -81 -1190 52 -493 265 -761 660 -835 73 -14 130 -16 300 -12 296 6 346 23 670 224 354 220 546 319 686 354 151 39 256 21 694 -114 258 -80 327 -99 480 -134 110 -25 138 -27 335 -27 185 0 229 3 315 22 248 54 405 133 485 244 25 34 30 51 30 97 -1 84 -34 147 -104 195 -33 22 -49 26 -115 26 -150 0 -276 49 -383 148 -184 171 -151 375 81 495 l66 34 455 12 c250 6 610 16 800 21 457 13 1306 35 2230 60 212 6 547 15 745 20 198 5 542 14 765 20 887 24 1008 28 1031 40 15 9 55 11 123 8 112 -6 179 -26 246 -76 43 -31 123 -126 153 -182 l18 -33 87 7 c123 10 256 38 476 103 267 78 413 113 469 113 43 0 52 -4 75 -32 78 -96 174 -180 239 -211 59 -27 79 -32 148 -32 71 0 88 4 147 33 79 38 149 111 187 192 34 73 41 191 15 258 -37 99 -165 194 -298 222 -81 17 -84 21 -59 74 23 47 48 65 121 87 54 16 82 50 82 99 0 40 -28 85 -58 94 -10 4 -24 21 -30 40 -7 19 -19 40 -28 47 -23 19 -71 13 -119 -15 -24 -14 -53 -26 -65 -26 -12 0 -35 -13 -51 -29 -43 -43 -40 -89 9 -144 61 -67 72 -88 72 -138 0 -25 -2 -48 -4 -50 -5 -5 -426 97 -433 105 -10 10 23 79 46 97 13 11 48 26 76 35 69 19 90 44 90 101 0 41 -4 49 -42 82 -24 20 -43 41 -43 47 0 6 -9 23 -21 38 -27 34 -70 34 -124 1 -22 -13 -51 -25 -64 -25 -26 0 -91 -60 -91 -83 0 -32 22 -72 64 -117 44 -47 65 -106 52 -148 -6 -17 -19 -15 -219 30 -116 27 -218 51 -225 53 -10 4 -8 14 8 44 24 48 49 67 117 87 60 17 72 29 80 78 7 46 -13 93 -48 111 -15 8 -31 25 -34 37 -11 36 -46 68 -74 68 -14 0 -42 -10 -61 -21 -19 -12 -56 -28 -82 -35 -53 -16 -78 -44 -78 -87 0 -37 14 -61 67 -121 38 -43 43 -53 43 -97 0 -27 -2 -49 -5 -49 -8 0 -417 90 -432 95 -10 3 -10 11 -2 32 17 46 48 71 116 94 57 19 67 26 80 57 21 51 4 106 -43 134 -19 11 -34 27 -34 36 -1 36 -54 76 -87 66 -10 -3 -40 -16 -68 -29 -27 -13 -67 -30 -88 -39 -73 -31 -72 -94 3 -180 45 -52 57 -79 58 -134 1 -21 -2 -23 -26 -17 -163 41 -208 21 -261 -120 -36 -93 -73 -150 -125 -190 l-35 -27 -193 1 c-106 1 -456 6 -778 11 -322 5 -880 14 -1240 20 -360 6 -916 15 -1235 20 -319 5 -924 15 -1345 21 l-765 11 -27 26 c-65 60 -73 140 -23 225 23 40 39 53 108 87 115 56 212 78 426 95 261 21 334 39 399 99 39 35 74 115 80 181 12 152 -87 248 -368 358 -171 67 -385 89 -650 68 -231 -20 -353 -48 -790 -181 -213 -65 -310 -83 -440 -82 -152 1 -220 22 -501 157 -503 242 -787 354 -1049 414 -132 30 -371 36 -481 12z"/></g></svg>
+        <h3>Musique</h3>
+        <p>La musique est pour moi une véritable façon de m'évader. Je pratique la guitare électrique et le ukulélé, deux instruments qui me permettent d'explorer des univers différents, de développer ma créativité et simplement de prendre du temps pour moi.</p>
+        <div class="herbier">
+          <span class="leaf-tag">Guitare électrique</span>
+          <span class="leaf-tag">Ukulélé</span>
+        </div>
+      </div>
+
+      <div class="passion-domain">
+        <svg class="passion-icon" viewBox="0 0 1146 1280" aria-hidden="true"><g transform="translate(0,1280) scale(0.1,-0.1)" fill="currentColor"><path d="M11050 12794 c-196 -38 -421 -174 -625 -379 -143 -144 -194 -187 -305 -262 -265 -180 -561 -299 -1110 -449 -151 -41 -279 -79 -285 -83 -601 -468 -870 -719 -990 -926 -80 -138 -198 -234 -507 -410 -76 -43 -176 -108 -223 -144 -143 -110 -174 -130 -325 -202 -80 -39 -179 -87 -220 -107 -169 -82 -253 -150 -383 -310 -143 -174 -357 -360 -747 -647 -248 -183 -415 -315 -515 -404 -128 -116 -206 -152 -328 -153 -93 0 -145 17 -193 66 -46 46 -64 94 -64 171 1 106 68 183 239 276 171 91 233 129 429 260 478 320 840 604 1215 953 148 138 148 138 285 201 75 34 298 126 494 205 l358 142 15 51 c70 232 -31 433 -254 508 -98 34 -199 32 -271 -3 -80 -39 -117 -74 -241 -221 -114 -137 -175 -190 -238 -207 -21 -5 -109 -9 -197 -7 -155 2 -161 1 -224 -26 -271 -118 -464 -155 -983 -188 l-188 -11 -97 -56 c-270 -156 -645 -277 -1062 -346 -237 -39 -324 -46 -563 -46 -261 0 -312 -7 -406 -54 -26 -14 -72 -47 -102 -73 -30 -27 -78 -69 -108 -93 -29 -24 -120 -121 -201 -215 -166 -192 -191 -216 -274 -274 -74 -51 -112 -54 -179 -11 -77 49 -124 135 -194 355 -46 146 -80 237 -141 373 -66 147 -95 196 -155 259 -63 66 -132 100 -234 112 -43 5 -107 15 -143 21 -36 7 -98 9 -140 6 -312 -25 -562 -214 -632 -479 -66 -251 -42 -447 85 -692 51 -98 52 -101 43 -154 -6 -35 -5 -73 2 -114 34 -181 173 -317 342 -333 110 -11 195 -66 342 -221 46 -48 124 -130 174 -183 l90 -95 17 -95 c26 -149 36 -261 52 -607 16 -354 27 -466 56 -622 20 -102 106 -378 149 -476 60 -139 223 -329 400 -467 168 -130 475 -343 580 -401 196 -109 470 -141 567 -66 21 16 79 61 128 99 146 114 238 149 400 150 165 1 328 61 410 152 59 66 80 129 71 225 -4 55 -2 81 8 101 22 42 76 89 129 112 56 25 141 37 151 22 12 -19 23 -817 16 -1152 l-7 -325 -35 -55 c-99 -154 -192 -391 -223 -565 -27 -158 -39 -586 -26 -1000 13 -406 35 -846 51 -1025 17 -180 25 -919 11 -1033 -39 -329 -253 -571 -644 -726 -85 -34 -240 -80 -406 -121 -136 -34 -276 -90 -334 -134 -37 -28 -74 -87 -92 -143 l-6 -23 128 0 c371 0 992 27 1293 56 218 21 247 20 370 -10 203 -50 283 -45 351 23 71 70 79 184 29 406 -34 152 -34 130 -6 460 42 504 109 846 230 1189 25 72 50 134 55 139 22 22 117 29 496 36 376 8 403 10 457 30 72 28 131 90 153 163 13 40 18 101 20 258 15 979 42 1323 129 1685 13 55 34 150 46 210 47 239 155 741 251 1165 313 1392 317 1409 409 1849 22 107 40 195 40 196 0 1 156 148 348 327 526 493 838 818 1057 1103 38 50 115 146 171 215 55 69 197 251 314 405 364 477 486 621 729 857 180 175 211 212 271 327 43 80 111 156 164 183 22 11 82 53 131 92 205 161 400 273 576 331 l96 31 172 159 c180 166 263 255 333 358 58 85 101 192 101 247 -1 104 -85 235 -180 280 -47 22 -166 35 -223 24z"/></g></svg>
+        <h3>Sport</h3>
+        <p>Le sport occupe une place importante dans ma vie. J'ai pratiqué le handball pendant 8 ans et le judo pendant 5 ans, et je joue également au badminton. Ces expériences m'ont appris bien plus que la pratique sportive : le respect des autres, la persévérance, la confiance en soi et surtout l'importance de savoir avancer avec les autres. Pour moi, le sport contribue aussi à garder un équilibre entre le corps et l'esprit.</p>
+        <div class="herbier">
+          <span class="leaf-tag">Handball — 8 ans</span>
+          <span class="leaf-tag">Judo — 5 ans</span>
+          <span class="leaf-tag">Badminton</span>
+        </div>
+      </div>
+
+      <div class="passion-domain">
+        <svg class="passion-icon" viewBox="0 0 1280 1005" aria-hidden="true"><g transform="translate(0,1005) scale(0.1,-0.1)" fill="currentColor"><path d="M7387 10040 c-577 -56 -1110 -268 -1547 -617 -117 -94 -316 -288 -417 -408 -289 -344 -516 -810 -604 -1241 -12 -60 -27 -114 -33 -120 -6 -6 -78 -23 -161 -38 -82 -15 -157 -29 -166 -32 -12 -3 -35 24 -84 96 -275 414 -659 725 -1122 909 -465 185 -1034 212 -1518 72 -300 -86 -574 -226 -825 -420 -117 -90 -330 -306 -419 -424 -204 -273 -352 -583 -424 -892 -114 -484 -78 -987 103 -1439 142 -357 383 -690 685 -946 235 -199 590 -388 868 -462 l87 -23 0 -132 0 -133 -239 0 c-140 0 -241 4 -243 9 -2 6 -131 57 -287 115 l-284 106 -199 0 c-109 0 -198 -2 -198 -5 0 -4 617 -1291 626 -1306 2 -3 56 8 120 26 l116 31 66 107 65 107 229 0 228 0 0 -1490 0 -1490 4150 0 4150 0 0 2475 0 2475 -322 0 -322 0 45 37 c410 344 741 860 893 1394 125 438 143 919 51 1375 -106 523 -371 1023 -750 1413 -401 413 -875 680 -1436 810 -241 56 -645 84 -882 61z m-2199 -4387 c126 -206 274 -386 471 -574 l134 -129 -742 0 c-409 0 -741 3 -739 8 2 4 33 52 69 107 110 164 225 400 269 551 l12 41 147 28 c131 25 314 61 318 64 0 1 28 -43 61 -96z m4196 -4678 c93 -45 146 -130 146 -235 0 -76 -21 -129 -71 -178 -54 -55 -104 -76 -184 -76 -79 -1 -130 20 -185 76 -129 129 -77 357 97 423 50 19 147 14 197 -10z"/><path d="M12060 4810 l-724 -440 -573 0 -573 0 2 -1102 3 -1103 580 -5 580 -5 715 -434 c393 -238 718 -435 723 -438 4 -2 7 889 7 1981 0 1092 -3 1986 -7 1986 -5 -1 -334 -199 -733 -440z"/></g></svg>
+        <h3>Créatif &amp; cinéma</h3>
+        <p>Le cinéma est une passion qui m'accompagne depuis longtemps. J'ai notamment choisi l'option cinéma au collège et participé à un club théâtre. Ces expériences m'ont permis de développer mon imagination, ma sensibilité artistique et mon envie de créer. Aujourd'hui encore, cette dimension créative influence ma façon de réfléchir et d'aborder les projets.</p>
+        <div class="herbier">
+          <span class="leaf-tag">Option cinéma</span>
+          <span class="leaf-tag">Club théâtre</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -764,6 +1022,53 @@
   document.addEventListener('keydown', function(e){
     if (e.key === 'Escape') closeMenu();
   });
+})();
+
+(function(){
+  var navLinks = document.querySelectorAll('nav.index a');
+  if (!navLinks.length) return;
+  var sections = [];
+  navLinks.forEach(function(a){
+    var id = a.getAttribute('href').slice(1);
+    var section = document.getElementById(id);
+    if (section) sections.push({ id: id, el: section });
+  });
+
+  function setActive(id){
+    navLinks.forEach(function(a){
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+    });
+  }
+
+  var ticking = false;
+  function updateActive(){
+    ticking = false;
+    var nearBottom = (window.innerHeight + window.scrollY) >= (document.documentElement.scrollHeight - 60);
+    if (nearBottom) {
+      setActive(sections[sections.length - 1].id);
+      return;
+    }
+    var refY = window.innerHeight * 0.35;
+    var current = sections[0].id;
+    for (var i = 0; i < sections.length; i++) {
+      var rect = sections[i].el.getBoundingClientRect();
+      if (rect.top <= refY) {
+        current = sections[i].id;
+      } else {
+        break;
+      }
+    }
+    setActive(current);
+  }
+  function onScroll(){
+    if (!ticking) {
+      window.requestAnimationFrame(updateActive);
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  updateActive();
 })();
 </script>
 
