@@ -1,0 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Work+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --paper: #EFE9D8;
+  --line: #C9C0A4;
+  --ink: #20301F;
+  --fern: #3D6B4A;
+  --moss: #6E8B5D;
+  --spore: #9C5B34;
+  --fog: #DAD6C3;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+html, body{max-width:100%; overflow-x:hidden;}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Work Sans', sans-serif;
+  font-size:17px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{
+  font-family:'Fraunces', serif;
+  font-weight:500;
+  margin:0;
+  color:var(--ink);
+}
+em, .latin{font-style:italic; font-family:'Fraunces', serif;}
+a{color:var(--fern);}
+
+.wrap{max-width:760px; margin:0 auto; padding:0 32px;}
+@media (max-width:600px){ .wrap{padding:0 20px;} }
+
+header.page{padding:56px 0 24px;}
+.back-link{
+  display:inline-flex; align-items:center; gap:8px;
+  text-decoration:none; color:var(--moss); font-size:14px;
+  border-bottom:1px solid transparent; transition:color .2s, border-color .2s;
+}
+.back-link:hover{color:var(--fern); border-color:var(--moss);}
+
+.eyebrow{
+  font-family:'Fraunces', serif; font-style:italic;
+  color:var(--moss); font-size:15px; margin:28px 0 6px; display:block;
+}
+h1.proj-title{font-size:clamp(2rem, 5vw, 2.8rem); line-height:1.1; margin-top:6px;}
+.proj-meta{color:var(--moss); font-size:15px; margin-top:10px;}
+
+.leaf-mark{width:34px; height:34px; margin-top:20px;}
+
+section.block{padding:34px 0; border-top:1px solid var(--line);}
+section.block:first-of-type{border-top:none;}
+section.block h2{font-size:1.3rem; margin-bottom:14px;}
+section.block p{margin:0 0 14px; max-width:64ch;}
+section.block ul{margin:0 0 14px; padding-left:20px;}
+section.block li{margin-bottom:8px; max-width:62ch;}
+
+.stack-tags{display:flex; flex-wrap:wrap; gap:10px; margin-top:6px;}
+.stack-tags span{
+  border:1px solid var(--moss); background:var(--fog); color:var(--ink);
+  padding:7px 14px; font-size:13.5px;
+}
+
+.next-project{
+  padding:34px 0 70px; border-top:1px solid var(--line);
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px;
+}
+.next-project a{
+  text-decoration:none; border:1px solid var(--ink); color:var(--ink);
+  padding:12px 22px; font-size:14px; transition:background .2s, color .2s;
+}
+.next-project a:hover{background:var(--ink); color:var(--paper);}
